@@ -26,5 +26,9 @@ class Post extends Model
     public function status(){
         return $this->belongsTo(Status::class);
     }
+
+    public function comments(){
+        return $this->morphMany(Comment::class,"commentable");
+    }
 }
 

@@ -3,20 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\Comment;
-use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class PostsController extends Controller
+class CommentsController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        // $posts = Post::all();
-        $posts = Post::latest()->paginate(5);
-        return view('posts.index',compact('posts'));
+    //
     }
 
     /**
@@ -32,7 +29,17 @@ class PostsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $user = Auth::user();
+        $user_id = $user->id;
+
+        Comment::create([
+            'description' => $request->description,
+            'user_id' => $user_id, 
+            'commentable_id' => $request->commentable_id,
+            'commentable_type' => $request->commentable_type,
+        ]);
+        
+        return redirect()->back();
     }
 
     /**
@@ -40,11 +47,7 @@ class PostsController extends Controller
      */
     public function show(string $id)
     {
-        $user = Auth::user();
-        $post = Post::findOrFail($id);
-        $comments = Comment::where('commentable_id', $post->id)->where('commentable_type', 'App\Models\Post')->orderBy("updated_at","desc")->get();
-        // $comments = Comment::all();
-        return view('posts.show',compact('post','comments'));
+        //
     }
 
     /**
@@ -68,8 +71,6 @@ class PostsController extends Controller
      */
     public function destroy(string $id)
     {
-        $post = Post::findOrFail($id);
-        $post->delete();
-        return redirect('posts');
+        //
     }
 }

@@ -24,8 +24,12 @@
                         
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><a href="#" class="dropdown-item"> <i class="fa-solid fa-pen-to-square text-info me-2"></i> Edit</a></li>
-                            <li><a href="#" class="dropdown-item"> <i class="fa-solid fa-trash text-danger me-2"></i> Delete</a></li>
+                            <li><a href="#" class="dropdown-item" onclick="event.preventDefault(); if(confirm('Are you sure to delete this post?')){document.getElementById('postDelete-{{$post->id}}').submit()}"> <i class="fa-solid fa-trash text-danger me-2"></i> Delete</a></li>
                         </ul>
+                        <form id="postDelete-{{$post->id}}" action="/posts/{{$post->id}}" method="POST">
+                            @csrf
+                            @method("DELETE")
+                        </form>
                     </div>
 
                     <a href="/posts" class="text-muted ms-3 text-decoration-none">&times;</a>
@@ -57,6 +61,35 @@
                     </a>
                 </div>
             </div>
+        </div>
+        <div class="card-body" >
+            <div style="height:200px; overflow-y:scroll; ">
+                <div class="mb-3" >
+                    @foreach ($comments as $comment)
+                        <div class="d-flex">
+                            <img src="{{asset('assets/image/thantzinaung.jpg')}}" width="30px" height="30px" class="rounded-circle me-3" alt="image">
+                            <div>
+                                <span class="text-muted small">{{$comment->user->name}}</span>
+                                <p class="m-0 p-0">{{$comment->description}} </p>
+                                <p class="text-muted small">{{$comment->created_at->format('d M')}} {{$comment->updated_at->diffForHumans()}}</p>
+                            </div>
+                        </div>
+                            
+                    @endforeach
+                </div>
+            </div>
+            <form action="{{route('comments.store')}}" method="POST">
+                @csrf
+
+                <div class="input-group">
+                    <input type="hidden" name="commentable_id" id="commentable_id" value="{{$post->id }}" />
+                    <input type="hidden" name="commentable_type" id="commentable_type" value="App\Models\Post" />
+
+                    <input type="text" name="description" class="form-control" placeholder="Write Something...">
+                    <button type="submit" class="btn btn-info text-light"><i class="fa-solid fa-paper-plane"></i></button>
+                </div>
+
+            </form>
         </div>
     </div>
 </div>
